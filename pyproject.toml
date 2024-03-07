@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "autorouting"
+version = "0.1"
+authors = [
+    {name = "Souheil Chelfouh", email = "trollfot@gmail.com"},
+]
+requires-python = ">=3.10"
+classifiers = ["License :: OSI Approved :: MIT License"]
+dependencies = [
+  "autoroutes",
+  "frozendict"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["autorouting"]
+namespaces = false
