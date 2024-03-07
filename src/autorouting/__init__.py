@@ -37,7 +37,7 @@ class RouteGroup(UserDict[str, list[Route]]):
             self[method].append(route)
         else:
             self[method] = [route]
-        self[method].sort(key=lambda r: -r.priority)
+        self[method].sort(key=lambda r: (-r.priority, -len(r.requirements)))
 
 
 class Router(dict[str, RouteGroup]):
@@ -64,20 +64,20 @@ class Router(dict[str, RouteGroup]):
                 f"Expected one of {self.allowed_methods!r}"
             )
 
-        if requirements:
-            requirements = frozendict(requirements)
-        route = Route(routed, requirements, priority=priority)
+        if requirements is None:
+            requirements = {}
+        route = Route(routed, frozendict(requirements), priority=priority)
         if path not in self:
             if name and name in self._names:
                 raise NameError(f"Name {name!r} is already in use.")
             group = self[path] = RouteGroup(name)
             group.add(method, route)
         else:
-            if group.name is None:
+            if self[path].name is None:
                 if name and name in self._names:
                     raise NameError(f"Name {name!r} is already in use.")
-                group.name = name
-            elif group.name != name:
+                self[path].name = name
+            elif self[path].name != name:
                 raise NameError(
                     f'Conflict: Route named {name} belongs to a '
                     f'group named: {group.name}'
@@ -90,22 +90,24 @@ class Router(dict[str, RouteGroup]):
         if group and method in group:
             for route in group[method]:
                 if not route.requirements:
-                    yield route, params
+                    yield route.routed, params
                 elif extra:
                     if set(route.requirements.keys()) <= set(extra.keys()):
                         for name, requirement in route.requirements.items():
                             if not requirement.match(extra[name]):
                                 continue
                         else:
-                            yield route, params
-
-        yield None, None
+                            yield route.routed, params
 
     def get(self, path: str, method: str, extra: dict | None = None):
         routes = self.match(path, method, extra)
-        route = next(routes)
-        routes.close()
-        return route
+        try:
+            route = next(routes)
+            return route
+        except StopIteration:
+            return None, None
+        finally:
+            routes.close()
 
     def get_by_name(self, name: str) -> RouteURL | None:
         return self._routes._byname.get(name)

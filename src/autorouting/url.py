@@ -1,4 +1,5 @@
 import re
+from typing import NamedTuple
 from functools import partial
 from autoroutes import MATCH_TYPES, PATTERNS
 from urllib.parse import urlencode
