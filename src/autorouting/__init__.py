@@ -2,6 +2,7 @@ from autoroutes import Routes as Autoroutes
 from collections import UserDict
 from typing import NamedTuple, Any, Literal, ClassVar
 from autorouting.url import RouteURL
+from frozendict import frozendict
 
 
 class Routes(Autoroutes):
@@ -13,7 +14,7 @@ class Routes(Autoroutes):
 
 class Route(NamedTuple):
     routed: Any
-    requirements: dict
+    requirements: frozendict
     priority: int = 0
 
 
@@ -63,6 +64,8 @@ class Router(dict[str, RouteGroup]):
                 f"Expected one of {self.allowed_methods!r}"
             )
 
+        if requirements:
+            requirements = frozendict(requirements)
         route = Route(routed, requirements, priority=priority)
         if path not in self:
             if name and name in self._names:
