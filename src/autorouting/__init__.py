@@ -110,8 +110,8 @@ class Router(dict[str, RouteGroup]):
                 self[path].name = name
             elif self[path].name != name:
                 raise NameError(
-                    f'Conflict: Route named {name} belongs to a '
-                    f'group named: {group.name}'
+                    f'Conflict: Path of route {name!r} already '
+                    f'belongs to a group named {self[path].name!r}.'
                 )
             self[path].add(method, route)
         return route
