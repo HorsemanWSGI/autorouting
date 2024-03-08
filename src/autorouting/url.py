@@ -38,7 +38,7 @@ class RouteURL(NamedTuple):
                 raise KeyError('Missing URL variable: {name}.')
             type, pattern = matcher
             value = values.pop(name)
-            if not pattern.match(value):
+            if not pattern.match(str(value)):
                 if type != 'regexp':
                     raise ValueError(
                         f'Param {name!r} of wrong type. '
