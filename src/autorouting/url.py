@@ -35,7 +35,7 @@ class RouteURL(NamedTuple):
         matched = {}
         for name, matcher in self.slugs.items():
             if name not in values:
-                raise KeyError('Missing URL variable: {name}.')
+                raise KeyError(f'Missing URL variable: {name}.')
             type, pattern = matcher
             value = values.pop(name)
             if not pattern.match(str(value)):
@@ -60,8 +60,8 @@ class RouteURL(NamedTuple):
 
         if unmatched and qstring:
             qs = urlencode(unmatched)
-            return f'{path}?{qs}'
-        return path
+            return f'{path}?{qs}', {}
+        return path, unmatched
 
     @classmethod
     def from_path(cls, path: str):

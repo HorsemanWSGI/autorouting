@@ -126,7 +126,7 @@ class Router(dict[str, RouteGroup]):
                     if set(route.requirements.keys()) <= set(extra.keys()):
                         for name, requirement in route.requirements.items():
                             if not requirement.match(extra[name]):
-                                continue
+                                break
                         else:
                             yield MatchedRoute(route.routed, params)
 
@@ -172,4 +172,4 @@ class Router(dict[str, RouteGroup]):
                 self[path] = RouteGroup(group.name, {
                     method: [*routes] for method, routes in group.items()
                 })
-        return router
+        return self
