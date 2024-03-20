@@ -53,7 +53,9 @@ class RouteGroup(UserDict[str, list[Route]]):
                 for route in routes:
                     if route not in router[key]:
                         router[key].append(route)
-                router[key].sort(key=lambda r: (-r.priority, -len(r.requirements)))
+                router[key].sort(
+                    key=lambda r: (-r.priority, -len(r.requirements))
+                )
             else:
                 router[key] = [*other[key]]
         return router
@@ -65,7 +67,9 @@ class RouteGroup(UserDict[str, list[Route]]):
                 for route in other[key]:
                     if route not in self[key]:
                         self[key].append(route)
-                self[key].sort(key=lambda r: (-r.priority, -len(r.requirements)))
+                self[key].sort(
+                    key=lambda r: (-r.priority, -len(r.requirements))
+                )
             else:
                 self[key] = [*other[key]]
         return self
@@ -125,7 +129,7 @@ class Router(dict[str, RouteGroup]):
                 elif extra:
                     if set(route.requirements.keys()) <= set(extra.keys()):
                         for name, requirement in route.requirements.items():
-                            if not requirement.match(extra[name]):
+                            if not requirement.matches(extra[name]):
                                 break
                         else:
                             yield MatchedRoute(route.routed, params)
