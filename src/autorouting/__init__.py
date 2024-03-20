@@ -1,6 +1,6 @@
 from autoroutes import Routes as Autoroutes
 from collections import UserDict
-from typing import NamedTuple, Any, Literal, ClassVar
+from typing import NamedTuple, Any, ClassVar
 from autorouting.url import RouteURL
 from frozendict import frozendict
 
