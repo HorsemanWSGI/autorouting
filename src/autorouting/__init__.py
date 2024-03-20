@@ -42,7 +42,9 @@ class RouteGroup(UserDict[str, list[Route]]):
             self[method].append(route)
         else:
             self[method] = [route]
-        self[method].sort(key=lambda r: (-r.priority, -len(r.requirements)))
+        self[method].sort(
+            key=lambda r: (-r.priority, -len(r.requirements))
+        )
 
     def __or__(self, other) -> 'RouteGroup':
         router = self.__class__(other.name or self.name)
@@ -134,7 +136,11 @@ class Router(dict[str, RouteGroup]):
                         else:
                             yield MatchedRoute(route.routed, params)
 
-    def get(self, path: str, method: str, extra: dict | None = None) -> MatchedRoute | None:
+    def get(self,
+            path: str,
+            method: str,
+            extra: dict | None = None) -> MatchedRoute | None:
+
         routes = self.match(path, method, extra)
         try:
             return next(routes)
@@ -151,7 +157,12 @@ class Router(dict[str, RouteGroup]):
         for path, group in self.items():
             if group.name:
                 self._routes._byname[group.name] = RouteURL.from_path(path)
-            self._routes.add(path, **{method: tuple(routes) for method, routes in group.items()})
+            self._routes.add(
+                path, **{
+                    method: tuple(routes)
+                    for method, routes in group.items()
+                }
+            )
 
     def __or__(self, other) -> 'Router':
         router = self.__class__()
